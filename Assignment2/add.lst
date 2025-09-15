@@ -1,0 +1,24 @@
+     1                                  ; int main(int argc, char** argv) {
+     2                                  ; unsigned short num1 = 65244; // use dw to declare 16-bit variable
+     3                                  ; unsigned short num2 = 4660; // use dw to declare 16-bit variable
+     4                                  ; unsigned int sum = 0; // use dd to declare 32-bit variable
+     5                                  ; sum = int(num1 + num2);
+     6                                  ; return 0;
+     7                                  ; }
+     8                                  
+     9                                  section .data
+    10 00000000 DCFE                        num1 dw  65244          ; Declare 16-bit variable num1
+    11 00000002 3412                        num2 dw  4660           ; Declare 16-bit variable num2
+    12 00000004 00000000                    sum  dd  0              ; Declare 32-bit variable sum
+    13                                      SYS_exit equ 60
+    14                                      EXIT_SUCCESS equ 0
+    15                                  
+    16                                  section .text
+    17                                      global _start
+    18                                  _start:
+    19 00000000 8A0425[00000000]            mov al, byte[num1]      ; Load num1 into AX (16-bit)
+    20 00000007 020425[02000000]            add al, byte[num2]      ; Add num2 to AX (16-bit)
+    21 0000000E 880425[04000000]            mov byte[sum], al      ; Store the result in sum (32-bit)
+    22 00000015 B83C000000                  mov rax, SYS_exit
+    23 0000001A BF00000000                  mov rdi, EXIT_SUCCESS
+    24 0000001F 0F05                        syscall
