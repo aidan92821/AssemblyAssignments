@@ -1,0 +1,22 @@
+     1                                  section .data
+     2                                      SYS_exit        equ 60
+     3                                      EXIT_SUCCESS    equ 0
+     4 00000000 00743BA40B000000            num1            dq  50000000000           ; Declare 16-bit variable
+     5 00000008 D5DC3200                    num2            dd  3333333            ; Declare 16-bit variable
+     6 0000000C 00000000                    quot            dd  0                ; Declare 16-bit variable
+     7 00000010 00000000                    remd            dd  0                ; Declare 16-bit variable
+     8                                  
+     9                                  
+    10                                  section .text
+    11                                      global _start
+    12                                  _start:
+    13 00000000 BA00000000                  mov     edx, 0
+    14 00000005 8B0425[00000000]            mov     eax, dword[num1]
+    15 0000000C 8B1425[04000000]            mov     edx, dword[num1+4]
+    16 00000013 F73425[08000000]            div     dword[num2]
+    17 0000001A 890425[0C000000]            mov     dword[quot], eax
+    18 00000021 891425[10000000]            mov     dword[remd], edx
+    19                                  _stop:
+    20 00000028 B83C000000                  mov     rax, SYS_exit
+    21 0000002D BF00000000                  mov     rdi, EXIT_SUCCESS
+    22 00000032 0F05                        syscall
