@@ -7,20 +7,25 @@
 ;	}
 
 
+;subtraction.asm
+; signed short num1 = 4660;
+; signed short num2 = -292;
+; signed short dif = 0;
+; dif = num1 - num2;
+
 section .data
-    num1 dw  4660           ; Declare 16-bit variable num1
-    num2 dw  -292           ; Declare 16-bit variable num2
-    diff dw  0              ; Declare 16-bit variable diff
-    SYS_exit     equ 60
-    EXIT_SUCCESS equ 0
+    num1    dw   4660   ;num1 = 0x1234
+    num2    dw   -292   ;num2 = 0xFEDC
+    dif     dw   0      ;dif = 0
 
 section .text
     global _start
-_start:
-    mov     ax, word [num1]     ; ax = num1 (16-bit)    
-    sub     ax, word [num2]     ; ax = num1 - num2 (16-bit)
-    mov     word [diff], ax     ; Store result in diff (16-bit)    
 
-    mov     rax, SYS_exit       
-    mov     rdi, EXIT_SUCCESS   
-    syscall
+_start:
+    mov     ax, word[num1]  ;ax = num1
+    sub     ax, word[num2]  ;ax = ax - num2
+    mov     word[dif], ax   ;dif = ax
+    
+    mov     rax, 60         ;terminate excuting process
+    mov     rdi, 0          ;exit status
+    syscall                 ;calling system services

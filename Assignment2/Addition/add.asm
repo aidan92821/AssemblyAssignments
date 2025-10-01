@@ -1,35 +1,32 @@
-; int main(int argc, char** argv) {
-; unsigned short num1 = 65244; // use dw to declare 16-bit variable
-; unsigned short num2 = 4660; // use dw to declare 16-bit variable
-; unsigned int sum = 0; // use dd to declare 32-bit variable
-; sum = int(num1 + num2);
-; return 0;
-; }
+;int main(int argc, char** argv) {
+;unsigned short num1 = 65244; // use dw to declare 16-bit variable
+;unsigned short num2 = 4660; // use dw to declare 16-bit variable
+;unsigned int sum = 0; // use dd to declare 32-bit variable
+;sum = int(num1 + num2);
+;return 0;
+;}
 
+; addition.asm
+; unsigned short num1 = 65244;
+; unsigned short num2 = 4660;
+; unsigned int sum = 0;
+; sum = int(num1 + num2);
 section .data
-    SYS_exit        equ 60
-    EXIT_SUCCESS    equ 0
-    num1            dw  65244            ; Declare 16-bit variable
-    num2            dw  4660             ; Declare 16-bit variable
-    sum             dd  0                ; Declare 32-bit variable
+    num1    dw  65244   ;num1 = 0xFEDC
+    num2    dw  4660    ;num2 = 0x1234
+    sum     dd  0       ;sum = 0
 
 section .text
     global _start
+
 _start:
-    mov     dx, 0               ; dx = high 16 bit sum start at 0
-
-    ; Low 16-bit add
-    mov     ax, word[num1]      ; ax = low 16 bit num1
-    add     ax, word[num2]      ; ax = low 16 bit sum 
-
-    ; High 16 bits carry
-    adc     dx, 0                
-
-    ; Store 32-bit sum
-    mov     word[sum],   ax     ; low  16 bit
-    mov     word[sum+2], dx     ; high 16 bit
-
-    ; exit
-    mov     rax, SYS_exit
-    mov     rdi, EXIT_SUCCESS
-    syscall
+    mov     dx, 0           ;dx = 0
+    mov     ax, word[num1]  ;ax = num1
+    add     ax, word[num2]  ;ax = ax + num2
+    adc     dx, 0           ;dx = dx + 0 + CF
+    mov     word[sum+0], ax ;sum+0 = ax
+    mov     word[sum+2], dx ;sum+2 = dx
+                            ;sum = dx:ax
+    mov     rax, 60         ;terminate excuting process
+    mov     rdi, 0          ;exit status
+    syscall                 ;calling system services

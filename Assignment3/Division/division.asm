@@ -6,25 +6,21 @@
 ; remainder = num1 % num2;
 
 section .data
-    SYS_exit        equ 60
-    EXIT_SUCCESS    equ 0
-
-    num1            dq 50000000000      ; 0x0000000B A43B7400
-    num2            dd 3333333          ; 0x0032DCD5
-    quot            dd 0                ; 32-bit quotient
-    remd            dd 0                ; 32-bit remainder
+    num1        dq  50000000000     ;num1 = 0000 000B A43B 7400h
+    num2        dd  3333333         ;num2 = 0032 DCD5h
+    quotient    dd  0               ;quotient = 0000 0000h
+    remainder   dd  0               ;remainder = 0000 0000h
 
 section .text
     global _start
 _start:
-    mov     eax, dword [num1]       ; low  dword
-    mov     edx, dword [num1+4]     ; high dword
-    div     dword [num2]            ; edx:eax / [num2]
-                                    ; eax = quotient, edx = remainder
-    mov     dword [quot], eax
-    mov     dword [remd], edx
-
-    ; exit
-    mov     rax, SYS_exit
-    mov     rdi, EXIT_SUCCESS
+    mov     eax, dword[num1+0]      ;eax = num1+0 = A43B 7400h
+    mov     edx, dword[num1+4]      ;edx = num1+4 = 0000 000Bh
+    div     dword[num2]             ;eax=edx:eax/num2=3A98h=15000
+                                    ;edx=edx:eax%num2=1388h=5000
+    mov     dword[quotient], eax    ;quotient = eax = 3A98h = 15000
+    mov     dword[remainder], edx   ;remainder = edx = 1388h = 5000
+_stop:
+    mov     rax, 60                 ;terminate excuting process
+    mov     rdi, 0                  ;exit status
     syscall

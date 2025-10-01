@@ -1,28 +1,22 @@
-; multiplication.asm
-; unsigned int num1 = 300000, num2 = 400000
-; unsigned long product = 0
-; product = long (num1 * num2)
+;multiplication.asm
+;unsigned int num1 = 300,000;
+;unsigned int num2 = 400,000;
+;unsigned long product = 0;
+;product = long(num1 * num2);
 
 section .data
-    SYS_exit        equ 60
-    EXIT_SUCCESS    equ 0
-
-    num1            dd 300000          ; 0x000493E0
-    num2            dd 400000          ; 0x00061A80
-    product         dq 0               ; 64-bit product
-
+    num1    dd  300000  ;num1 = 0004 93E0h
+    num2    dd  400000  ;num2 = 0006 1A80h
+    product dq  0       ;product = 0000 0000 0000 0000h
 section .text
     global _start
+
 _start:
-    ; edx:eax = eax * [num2]  (unsigned 32 x 32 -> 64)
-    mov     edx, 0                     ; Clear edx before multiplication
-    mov     eax, dword [num1]          ; eax = num1
-    mul     dword [num2]               ; edx:eax = eax * [num2]
-
-    mov     dword [product], eax       ; low  32 bits 
-    mov     dword [product+4], edx     ; high 32 bits
-
-    ; exit
-    mov     rax, SYS_exit
-    mov     rdi, EXIT_SUCCESS
+    mov     eax, dword[num1]        ;eax = num1 = 0004 93E0h
+    mul     dword[num2]             ;edx:eax = eax * num2 = 0000 001B F08E B000h
+    mov     dword[product], eax     ;product+0 = eax = F08E B000h
+    mov     dword[product+4], edx   ;product+4 = edx = 0000 001Bh
+_stop:
+    mov     rax, 60                 ;terminate excuting process
+    mov     rdi, 0                  ;exit status
     syscall
