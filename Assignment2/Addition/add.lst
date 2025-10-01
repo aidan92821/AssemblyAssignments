@@ -16,9 +16,9 @@
     16                                  section .text
     17                                      global _start
     18                                  _start:
-    19 00000000 8A0425[00000000]            mov al, byte[num1]      ; Load num1 into AX (16-bit)
-    20 00000007 020425[02000000]            add al, byte[num2]      ; Add num2 to AX (16-bit)
-    21 0000000E 880425[04000000]            mov byte[sum], al      ; Store the result in sum (32-bit)
-    22 00000015 B83C000000                  mov rax, SYS_exit
-    23 0000001A BF00000000                  mov rdi, EXIT_SUCCESS
-    24 0000001F 0F05                        syscall
+    19 00000000 668B0425[00000000]          mov ax, word[num1]      ; Load num1 into AX (16-bit)
+    20 00000008 66030425[02000000]          add ax, word[num2]      ; Add num2 to AX (16-bit)
+    21 00000010 66890425[04000000]          mov word[sum], ax       ; Store the result in sum (32-bit)
+    22 00000018 B83C000000                  mov rax, SYS_exit
+    23 0000001D BF00000000                  mov rdi, EXIT_SUCCESS
+    24 00000022 0F05                        syscall

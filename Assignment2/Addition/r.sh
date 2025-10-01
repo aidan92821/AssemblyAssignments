@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Compile addition.asm with NASM
-nasm -g -F dwarf -f elf64 add.asm -l add.lst
+nasm -f elf64 -g -F dwarf add.asm -o add.o
 
 # Link the object file to create executable
-ld -g -o add add.o
+ld -z noexecstack -g -o add add.o
 
 # Run the executable
 ./add

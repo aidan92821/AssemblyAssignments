@@ -16,18 +16,18 @@ section .data
 section .text
     global _start
 _start:
-    mov     dx, 0               ; DX = high 16 bit sum start at 0
+    mov     dx, 0               ; dx = high 16 bit sum start at 0
 
     ; Low 16-bit add
-    mov     ax, word[num1]         ; AX = low 16 bit num1
-    add     ax, word[num2]          ; AX = low16 bit sum 
+    mov     ax, word[num1]      ; ax = low 16 bit num1
+    add     ax, word[num2]      ; ax = low 16 bit sum 
 
     ; High 16 bits carry
-    adc     dx, 0               ; DX += CF 
+    adc     dx, 0                
 
     ; Store 32-bit sum
-    mov     word[sum],   ax         ; low  16 bit
-    mov     word[sum+2], dx         ; high 16 bit
+    mov     word[sum],   ax     ; low  16 bit
+    mov     word[sum+2], dx     ; high 16 bit
 
     ; exit
     mov     rax, SYS_exit
