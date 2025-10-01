@@ -1,22 +1,30 @@
-     1                                  section .data
-     2                                      SYS_exit        equ 60
-     3                                      EXIT_SUCCESS    equ 0
-     4 00000000 00743BA40B000000            num1            dq  50000000000           ; Declare 16-bit variable
-     5 00000008 D5DC3200                    num2            dd  3333333            ; Declare 16-bit variable
-     6 0000000C 00000000                    quot            dd  0                ; Declare 16-bit variable
-     7 00000010 00000000                    remd            dd  0                ; Declare 16-bit variable
-     8                                  
-     9                                  
-    10                                  section .text
-    11                                      global _start
-    12                                  _start:
-    13 00000000 BA00000000                  mov     edx, 0
-    14 00000005 8B0425[00000000]            mov     eax, dword[num1]
-    15 0000000C 8B1425[04000000]            mov     edx, dword[num1+4]
-    16 00000013 F73425[08000000]            div     dword[num2]
-    17 0000001A 890425[0C000000]            mov     dword[quot], eax
-    18 00000021 891425[10000000]            mov     dword[remd], edx
-    19                                  _stop:
-    20 00000028 B83C000000                  mov     rax, SYS_exit
-    21 0000002D BF00000000                  mov     rdi, EXIT_SUCCESS
-    22 00000032 0F05                        syscall
+     1                                  ; division.asm
+     2                                  ; unsigned long num1 = 50,000,000,000;
+     3                                  ; unsigned int  num2 = 3,333,333;
+     4                                  ; unsigned int  quotient = 0, remainder = 0;
+     5                                  ; quotient = num1 / num2;
+     6                                  ; remainder = num1 % num2;
+     7                                  
+     8                                  section .data
+     9                                      SYS_exit        equ 60
+    10                                      EXIT_SUCCESS    equ 0
+    11                                  
+    12 00000000 00743BA40B000000            num1            dq 50000000000      ; 0x0000000B A43B7400
+    13 00000008 D5DC3200                    num2            dd 3333333          ; 0x0032DCD5
+    14 0000000C 00000000                    quot            dd 0                ; 32-bit quotient
+    15 00000010 00000000                    remd            dd 0                ; 32-bit remainder
+    16                                  
+    17                                  section .text
+    18                                      global _start
+    19                                  _start:
+    20 00000000 8B0425[00000000]            mov     eax, dword [num1]       ; low  dword
+    21 00000007 8B1425[04000000]            mov     edx, dword [num1+4]     ; high dword
+    22 0000000E F73425[08000000]            div     dword [num2]            ; edx:eax / [num2]
+    23                                                                      ; eax = quotient, edx = remainder
+    24 00000015 890425[0C000000]            mov     dword [quot], eax
+    25 0000001C 891425[10000000]            mov     dword [remd], edx
+    26                                  
+    27                                      ; exit
+    28 00000023 B83C000000                  mov     rax, SYS_exit
+    29 00000028 BF00000000                  mov     rdi, EXIT_SUCCESS
+    30 0000002D 0F05                        syscall
