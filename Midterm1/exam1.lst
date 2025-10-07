@@ -1,0 +1,36 @@
+     1                                  ; exam1.asm
+     2                                  ; signed int num1 = -2100000000   32-bit doubleword
+     3                                  ; signed int num2 = -50000        16-bit word
+     4                                  ; signed int num3 = +2100000000   32-bit doubleword
+     5                                  ; signed int quotient = 0         16-bit word
+     6                                  ; signed long sum = 0
+     7                                  ; quotient = num1 / num2
+     8                                  ; sum = long(quotient + num3)
+     9                                  
+    10                                  section .data
+    11 00000000 008BD482                    num1        dd  -2100000000     
+    12 00000004 B03CFFFF                    num2        dd  -50000       
+    13 00000008 00752B7D                    num3        dd  2100000000   
+    14 0000000C 00000000                    quotient    dd  0               
+    15 00000010 00000000                    sum         dd  0   
+    16                                  
+    17                                  section .text
+    18                                      global _start
+    19                                  _start:
+    20                                      ; Division
+    21 00000000 8B0425[00000000]            mov     eax, dword[num1]
+    22 00000007 99                          cdq
+    23 00000008 F73C25[04000000]            idiv    dword[num2]             
+    24 0000000F 890425[0C000000]            mov     dword[quotient], eax    
+    25                                           
+    26                                      ; Addition     
+    27 00000016 668B0425[08000000]          mov     ax, word[num3]
+    28 0000001E 668B1425[0A000000]          mov     dx, word[num3+2]  
+    29 00000026 66030425[0C000000]          add     ax, word[quotient]  
+    30 0000002E 6683D200                    adc     dx, 0           
+    31 00000032 66890425[10000000]          mov     word[sum+0], ax 
+    32 0000003A 66891425[12000000]          mov     word[sum+2], dx 
+    33                                  _stop:
+    34 00000042 B83C000000                  mov     rax, 60                 ;terminate excuting process
+    35 00000047 BF00000000                  mov     rdi, 0                  ;exit status
+    36 0000004C 0F05                        syscall
