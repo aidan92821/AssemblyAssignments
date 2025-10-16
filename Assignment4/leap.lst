@@ -1,0 +1,59 @@
+     1                                  ; leap.asm
+     2                                  ; int main(void) {
+     3                                  ;   unsigned short year = 2025;
+     4                                  ;   unsigned short yLeap = 0, nLeap = 0;
+     5                                  ;   if ((year % 400 == 0) || ((year % 4 == 0) && (year % 100 != 0))) yLeap++;
+     6                                  ;   else nLeap++;
+     7                                  ;   return 0;
+     8                                  ; }
+     9                                  
+    10                                  section .data
+    11                                      SYS_exit      equ 60
+    12                                      EXIT_SUCCESS  equ 0
+    13                                  
+    14 00000000 6C07                        year   dw 1900
+    15 00000002 0000                        yLeap  dw 0
+    16 00000004 0000                        nLeap  dw 0
+    17                                  
+    18 00000006 9001                        C400   dw 400
+    19 00000008 6400                        C100   dw 100
+    20 0000000A 0400                        C4     dw 4
+    21                                  
+    22                                  section .text
+    23                                      global _start
+    24                                  _start:
+    25                                      ; if (year % 400 == 0) go to leap
+    26 00000000 668B0425[00000000]          mov     ax, word[year]
+    27 00000008 6631D2                      xor     dx, dx           ; clear the upper 16 bits for remainder
+    28 0000000B 668B1C25[06000000]          mov     bx, word[C400]
+    29 00000013 66F7F3                      div     bx               ; ax = quotient, dx = remainder
+    30 00000016 6683FA00                    cmp     dx, 0
+    31 0000001A 7438                        je      leap             ; divisible by 400 go to leap
+    32                                  
+    33                                      ; if (year % 4 != 0) goto not_leap
+    34 0000001C 668B0425[00000000]          mov     ax, word[year]
+    35 00000024 6631D2                      xor     dx, dx
+    36 00000027 668B1C25[0A000000]          mov     bx, word[C4]
+    37 0000002F 66F7F3                      div     bx
+    38 00000032 6683FA00                    cmp     dx, 0
+    39 00000036 7526                        jne     not_leap         ; not divisible by 4 -> not leap
+    40                                  
+    41                                      ; if (year % 100 == 0) goto not_leap
+    42 00000038 668B0425[00000000]          mov     ax, word[year]
+    43 00000040 6631D2                      xor     dx, dx
+    44 00000043 668B1C25[08000000]          mov     bx, word[C100]
+    45 0000004B 66F7F3                      div     bx
+    46 0000004E 6683FA00                    cmp     dx, 0
+    47 00000052 740A                        je      not_leap         ; divisible by 100 (and not by 400) go to not leap
+    48                                  
+    49                                  leap:
+    50 00000054 66FF0425[02000000]          inc     word[yLeap]
+    51 0000005C EB08                        jmp     done
+    52                                  
+    53                                  not_leap:
+    54 0000005E 66FF0425[04000000]          inc     word[nLeap]
+    55                                  
+    56                                  done:
+    57 00000066 B83C000000                  mov     rax, SYS_exit
+    58 0000006B BF00000000                  mov     rdi, EXIT_SUCCESS
+    59 00000070 0F05                        syscall
