@@ -23,9 +23,8 @@
 section .data
     SYS_exit     equ 60
     EXIT_SUCCESS equ 0
-    LF           equ 10
 
-    flexStr db "Welcome to Ubuntu 22.04.6 LTS", LF, 0  
+    flexStr      db "Welcome to Ubuntu 22.04.6 LTS", 0  
 
 section .bss
     toUpper resb 30
@@ -38,13 +37,14 @@ _start:
     mov rcx, 30             ; counter = 30
 
 doloop:
-    mov al, [flexStr + rsi] ; load current char
+    mov al, [flexStr + rsi] 
 
     ; if ('A' <= al <= 'Z')
     cmp al, 'A'
-    jb check_lower
+    jb  check_lower
     cmp al, 'Z'
-    ja check_lower
+    ja  check_lower
+
     ; uppercase letter
     mov [toUpper + rsi], al
     mov bl, al
@@ -55,9 +55,10 @@ doloop:
 check_lower:
     ; else if ('a' <= al <= 'z')
     cmp al, 'a'
-    jb other_char
+    jb  other_char
     cmp al, 'z'
-    ja other_char
+    ja  other_char
+    
     ; lowercase letter
     mov bl, al
     sub bl, 0x20
@@ -66,7 +67,7 @@ check_lower:
     jmp step_next
 
 other_char:
-    ; non-alphabetic
+    ; special characters & numbers
     mov [toUpper + rsi], al
     mov [toLower + rsi], al
 
