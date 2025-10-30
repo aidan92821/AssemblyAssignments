@@ -1,0 +1,57 @@
+     1                                  ; lcm3.asm
+     2                                  ; int arr1[3] = {3,6,40};
+     3                                  ; int arr2[3] = {4,8,60};
+     4                                  ; int lcm[3];
+     5                                  ; rcx = 0;
+     6                                  ; do {
+     7                                  ;   ebx = arr1[rcx];
+     8                                  ;   do {
+     9                                  ;     if (ebx % arr2[rcx] == 0) goto found;
+    10                                  ;     ebx = ebx + arr1[rcx];
+    11                                  ;   } while (ebx <= arr1[rcx] * arr2[rcx]);
+    12                                  ; found:
+    13                                  ;   lcm[rcx] = ebx;
+    14                                  ;   rcx++;
+    15                                  ; } while (rcx <= 2);
+    16                                  ; return 0;
+    17                                  
+    18                                  section .data
+    19 00000000 030000000600000028-         arr1    dd  3, 6, 40
+    19 00000009 000000             
+    20 0000000C 04000000080000003C-         arr2    dd  4, 8, 60
+    20 00000015 000000             
+    21                                  
+    22                                  section .bss
+    23 00000000 <res Ch>                    lcm     resd 3
+    24                                  
+    25                                  section .text
+    26                                      global _start
+    27                                  _start:
+    28 00000000 B900000000                  mov     rcx, 0              
+    29                                  
+    30                                  outer_loop:
+    31 00000005 8B1C8D[00000000]            mov     ebx, dword [arr1 + rcx*4]
+    32                                  
+    33                                  inner_loop:
+    34 0000000C 89D8                        mov     eax, ebx
+    35 0000000E 99                          cdq
+    36 0000000F 448B048D[0C000000]          mov     r8d, dword [arr2 + rcx*4]
+    37 00000017 41F7F8                      idiv    r8d
+    38 0000001A 83FA00                      cmp     edx, 0
+    39 0000001D 741A                        je      found                   
+    40 0000001F 031C8D[00000000]            add     ebx, dword [arr1 + rcx*4]
+    41 00000026 8B048D[00000000]            mov     eax, dword [arr1 + rcx*4]
+    42 0000002D 0FAF048D[0C000000]          imul    eax, dword [arr2 + rcx*4]
+    43 00000035 39C3                        cmp     ebx, eax
+    44 00000037 7ED3                        jle     inner_loop
+    45                                  
+    46                                  found:
+    47 00000039 891C8D[00000000]            mov     dword [lcm + rcx*4], ebx
+    48 00000040 48FFC1                      inc     rcx
+    49 00000043 4883F902                    cmp     rcx, 2
+    50 00000047 7EBC                        jle     outer_loop
+    51                                  
+    52                                      ; return 0;
+    53 00000049 B83C000000                  mov     rax, 60          
+    54 0000004E BF00000000                  mov     rdi, 0                
+    55 00000053 0F05                        syscall
